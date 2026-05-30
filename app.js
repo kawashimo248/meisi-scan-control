@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 社員のスマートフォンを追加する場合は、以下の配列の中にUUIDを文字列として追加してください。
     const ALLOWED_DEVICES = [
         'dev-test-pc-bypass', // デバッグ・開発用のサンプルID
-        'dev-167b4af5-ed36-4b3f-a5ee-78b0345baa12', // 登録済: Android (Pixel 7a)
+        'dev-12866a9b-4004-470c-be51-0c5a6be81538', // 登録済: Android (Pixel 7a)
         // ここに許可する端末のUUID（dev-xxxx...）を追記していきます。
         // 例: 'dev-12345678-abcd-ef01-2345-6789abcdef01',
     ];
