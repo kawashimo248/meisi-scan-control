@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI名刺読み取りアシスタント（端末制限版）</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- PWA Settings for mobile app integration -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.png" type="image/png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="名刺読取(制限)">
+    <link rel="apple-touch-icon" href="icon.png">
+</head>
+<body>
+    <!-- PC Access Lock Screen Overlay -->
+    <div id="pc-lock-overlay" class="lock-screen-overlay hidden">
+        <div class="lock-card">
+            <div class="lock-icon-wrapper">
+                <i data-lucide="tablet-smartphone" style="width: 32px; height: 32px;"></i>
+            </div>
+            <div class="lock-title">PCアクセス制限</div>
+            <div class="lock-desc">
+                本アプリは携帯端末（スマートフォン）専用の社内ツールです。<br>
+                個人情報・セキュリティ保護のため、PCからのアクセスは制限されています。
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-primary); margin-top: 10px; font-weight: bold;">
+                スマートフォンからアクセスしてください
+            </div>
+            <div class="device-badge-list">
+                <div class="device-badge">
+                    <i data-lucide="apple" style="width: 12px; height: 12px;"></i> iOS専用
+                </div>
+                <div class="device-badge">
+                    <i data-lucide="smartphone" style="width: 12px; height: 12px;"></i> Android専用
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Passcode Lock Screen Overlay -->
+    <div id="passcode-lock-overlay" class="lock-screen-overlay hidden">
+        <div class="lock-card">
+            <div class="lock-icon-wrapper secure">
+                <i data-lucide="shield-alert" style="width: 32px; height: 32px;"></i>
+            </div>
+            <div class="lock-title">セキュリティ承認</div>
+            <div class="lock-desc">
+                本アプリは許可された端末でのみ利用可能です。<br>
+                管理者から配布された「アクセスコード」を入力してください。
+            </div>
+
+            <!-- Passcode Input -->
+            <div class="passcode-input-container">
+                <input type="password" id="passcode-field" class="passcode-input" placeholder="••••••••" autocomplete="new-password">
+                <div id="passcode-error" class="passcode-error-msg"></div>
+            </div>
+
+            <button id="btn-passcode-unlock" class="btn-action" style="margin-bottom: 24px;">
+                <i data-lucide="unlock" style="width: 18px; height: 18px;"></i>
+                アクセスを承認する
+            </button>
+
+            <!-- Device Registration Info -->
+            <div class="device-uuid-container">
+                <span class="device-uuid-label">この端末の識別ID（UUID）</span>
+                <div class="device-uuid-value-wrapper">
+                    <div id="device-uuid-display" class="device-uuid-value">Generating...</div>
+                    <button id="btn-copy-device-uuid" class="btn-copy-uuid" title="IDをコピー">
+                        <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application UI -->
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-area">
+                <i data-lucide="contact-2" style="width: 24px; height: 24px;"></i>
+            </div>
+            <h1>AI名刺読み取りアシスタント</h1>
+            <p class="subtitle">カメラで撮影するか画像を選択するだけで、連絡先を自動整理</p>
+            
+            <!-- Settings Modal Trigger -->
+            <button id="btn-settings-toggle" class="btn-settings-toggle" title="設定">
+                <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
+            </button>
+        </header>
+
+        <!-- API Status Banner Warning -->
+        <div id="api-status-banner" class="api-warning-banner hidden">
+            <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
+            <span>Gemini APIキーが設定されていません。タップして登録してください。</span>
+        </div>
+
+        <!-- Main UI Card -->
+        <main class="main-card">
+            <!-- Drop & Camera Select Zone -->
+            <div id="drop-zone" class="drop-zone">
+                <i data-lucide="camera" style="width: 48px; height: 48px;"></i>
+                <div class="drop-zone-text">カメラを起動して名刺を撮影</div>
+                <div class="drop-zone-sub">タップしてカメラを起動します</div>
+                <!-- Input field hidden for camera -->
+                <input type="file" id="camera-file-input" accept="image/*" capture="environment" style="display: none;">
+            </div>
+
+            <!-- File Select Area -->
+            <div id="file-select-container" class="file-select-container">
+                <div class="or-separator">または</div>
+                <button id="btn-file-select" class="btn-secondary" type="button">
+                    <i data-lucide="image" style="width: 18px; height: 18px;"></i>
+                    <span>ファイルから写真を選択</span>
+                </button>
+                <!-- Input field hidden for normal file select -->
+                <input type="file" id="image-file-input" accept="image/*" style="display: none;">
+            </div>
+
+            <!-- Image Preview Area -->
+            <div id="preview-container" class="preview-container">
+                <img id="preview-image" src="" alt="名刺プレビュー" class="preview-image">
+                <button id="btn-clear-preview" class="btn-clear-preview" title="画像を消去">
+                    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                </button>
+            </div>
+
+            <!-- Action Button -->
+            <button id="btn-process" class="btn-action" disabled>
+                <i data-lucide="cpu" style="width: 18px; height: 18px;"></i>
+                <span>名刺をスキャンする</span>
+            </button>
+
+            <!-- Loading Spinner Overlay -->
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="spinner"></div>
+                <div id="loading-text" class="loading-text">AIが名刺画像を解析中...</div>
+            </div>
+
+            <!-- Result Section -->
+            <div id="result-section" class="result-section">
+                <div class="result-header">
+                    <div class="result-title">
+                        <i data-lucide="check-circle-2" style="width: 16px; height: 16px;"></i>
+                        解析結果（整理済みテキスト）
+                    </div>
+                    <button id="btn-copy" class="btn-copy">
+                        <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                        コピー
+                    </button>
+                </div>
+                <textarea id="result-box" class="result-box" readonly></textarea>
+            </div>
+        </main>
+
+        <!-- Security and Info Alert -->
+        <div class="info-alert">
+            <i data-lucide="shield-check" style="width: 18px; height: 18px; margin-top: 2px;"></i>
+            <div>
+                <p style="font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">携帯端末制限と個人情報保護について</p>
+                <p>本アプリは許可された携帯端末（スマートフォン）でのみ稼働するセキュリティ対策版です。読み取った名刺データはブラウザ内の処理のみで完結し、外部のサーバーには保存されないため安全です。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Key Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">API設定・端末情報</div>
+                <button id="btn-settings-close" class="btn-close">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label for="gemini-api-key" class="form-label">Gemini APIキー</label>
+                <div class="input-container">
+                    <input type="password" id="gemini-api-key" class="form-input" placeholder="Google AI Studioで取得したAPIキーを入力">
+                    <button class="btn-toggle-visibility" data-target="gemini-api-key" type="button">
+                        <i data-lucide="eye" style="width: 18px; height: 18px;"></i>
+                    </button>
+                </div>
+                <p style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 6px;">
+                    ※議事録アプリ等で登録済みの場合は、自動で適用されます。
+                </p>
+            </div>
+
+            <!-- Device Info Section in Settings -->
+            <div class="settings-device-info">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>この端末の情報</span>
+                        <span class="status-badge verified">
+                            <i data-lucide="check" style="width: 10px; height: 10px;"></i> 制限解除済
+                        </span>
+                    </label>
+                    <div class="device-uuid-container" style="background: rgba(0, 0, 0, 0.2); margin-top: 6px;">
+                        <span class="device-uuid-label">端末識別ID (UUID)</span>
+                        <div class="device-uuid-value-wrapper">
+                            <div id="settings-uuid-display" class="device-uuid-value" style="font-size: 0.7rem; color: var(--text-secondary);">Unknown</div>
+                            <button id="btn-settings-copy-uuid" class="btn-copy-uuid" title="IDをコピー">
+                                <i data-lucide="copy" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+                        <button id="btn-device-lock-reset" class="btn-secondary" style="padding: 6px 12px; width: auto; font-size: 0.75rem; border-color: rgba(239, 68, 68, 0.2); color: #fca5a5;">
+                            <i data-lucide="lock" style="width: 12px; height: 12px;"></i>
+                            この端末を再ロックする
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-settings-save" class="btn-action" style="background: var(--accent-grad); box-shadow: none; margin-top: 20px;">
+                <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                設定を保存する
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

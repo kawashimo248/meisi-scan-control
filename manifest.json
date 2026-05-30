@@ -1,0 +1,16 @@
+{
+  "short_name": "名刺読取(制限)",
+  "name": "AI名刺読み取りアシスタント(端末制限版)",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#090d16",
+  "display": "standalone",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait"
+}
