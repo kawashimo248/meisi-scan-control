@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---------------------------------------------------------
     // 1. Config & State Variables
     // ---------------------------------------------------------
+    console.log("Version 1.0.2 - Whitelist Updated (Pixel 7a registered)");
     const GEMINI_MODEL = 'gemini-2.5-flash'; 
     const CORRECT_PASSCODE = 'MOBILE-ACCESS-2026'; // 管理者から提供される端末解除アクセスコード
     
