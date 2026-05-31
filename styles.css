@@ -120,6 +120,31 @@ h1 {
     transform: rotate(45deg);
 }
 
+/* Help Icon */
+.btn-help-toggle {
+    position: absolute;
+    top: 0;
+    right: 48px; /* 歯車ボタンの左側に配置 */
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+}
+
+.btn-help-toggle:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
 /* API Banner warning */
 .api-warning-banner {
     background: rgba(239, 68, 68, 0.1);
@@ -804,4 +829,67 @@ h1 {
     background: rgba(16, 185, 129, 0.1);
     color: var(--accent);
     border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Help Modal Custom Layout */
+.help-modal-content {
+    max-width: 480px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.help-modal-body {
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-top: 10px;
+    font-size: 0.82rem;
+}
+
+.help-modal-body h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 6px;
+    color: #fff;
+}
+
+.help-modal-body h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 12px;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+}
+
+.help-modal-body p {
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.help-modal-body ul, .help-modal-body ol {
+    margin-bottom: 14px;
+    padding-left: 18px;
+    color: var(--text-secondary);
+}
+
+.help-modal-body li {
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+.help-modal-body blockquote {
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid var(--primary);
+    padding: 10px 14px;
+    margin: 14px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.help-modal-body blockquote p {
+    margin-bottom: 0;
+    font-size: 0.78rem;
 }

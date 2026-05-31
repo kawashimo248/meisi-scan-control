@@ -95,6 +95,11 @@
             <h1>AI名刺読み取りアシスタント</h1>
             <p class="subtitle">カメラで撮影するか画像を選択するだけで、連絡先を自動整理</p>
             
+            <!-- Help Modal Trigger -->
+            <button id="btn-help-toggle" class="btn-help-toggle" title="取扱説明書">
+                <i data-lucide="help-circle" style="width: 18px; height: 18px;"></i>
+            </button>
+
             <!-- Settings Modal Trigger -->
             <button id="btn-settings-toggle" class="btn-settings-toggle" title="設定">
                 <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
@@ -229,6 +234,68 @@
                 <i data-lucide="save" style="width: 16px; height: 16px;"></i>
                 設定を保存する
             </button>
+        </div>
+    </div>
+
+    <!-- Help / Instruction Modal -->
+    <div id="help-modal" class="modal hidden">
+        <div class="modal-content help-modal-content">
+            <div class="modal-header">
+                <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+                    <i data-lucide="help-circle" style="width: 20px; height: 20px; color: var(--primary);"></i>
+                    <span>取扱説明書（導入・セキュリティ設定）</span>
+                </div>
+                <button id="btn-help-close" class="btn-close">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+            <div class="modal-body help-modal-body">
+                <h2>🔒 携帯端末セキュリティ制限について</h2>
+                <p>本アプリは社外利用や不正アクセスを防止するため、以下の二重の制限を設けています。</p>
+                <ol>
+                    <li><strong>デバイス制限（PCアクセス遮断）:</strong> PCからのアクセスは自動的にロック画面となり、利用できません。スマートフォンからアクセスしてください。</li>
+                    <li><strong>セキュリティ承認（初回のみ）:</strong> 初回起動時に「アクセスコード」の入力が必要です。認証後は再入力は不要です。</li>
+                    <li><strong>端末固有ID (UUID):</strong> 各端末には自動で固有ID（UUID）が割り当てられます。管理者が「どの端末でアプリが認証されたか」を照合する際に使用されます。</li>
+                </ol>
+
+                <blockquote>
+                    <p>🔑 <strong>初期アクセスコード:</strong> <code>MOBILE-ACCESS-2026</code></p>
+                </blockquote>
+
+                <h2>📱 ホーム画面への追加（全画面表示）</h2>
+                <p>スマートフォン（iPhone / Android）のホーム画面に追加することで、アドレスバーが非表示になり、通常のスマホアプリと同様に全画面で起動できるようになります。</p>
+                
+                <h3>🍎 iPhone (Safari) の設定手順</h3>
+                <ol>
+                    <li><strong>Safari</strong> でアプリのURLを開きます。</li>
+                    <li>画面下部中央にある<strong>「共有」ボタン</strong>をタップします。</li>
+                    <li>メニューを下へスクロールし、<strong>「ホーム画面に追加」</strong>を選択します。</li>
+                    <li>画面右上の<strong>「追加」</strong>をタップします。</li>
+                </ol>
+
+                <h3>🤖 Android (Chrome) の設定手順</h3>
+                <ol>
+                    <li><strong>Chrome</strong> でアプリのURLを開きます。</li>
+                    <li>画面右上にある<strong>「3つのドット（メニュー）」</strong>アイコンをタップします。</li>
+                    <li>メニューから<strong>「アプリをインストール」</strong>（または「ホーム画面に追加」）を選択します。</li>
+                </ol>
+
+                <h2>📖 基本的な使い方</h2>
+                <ol>
+                    <li>ホーム画面のアイコンからアプリを起動します。</li>
+                    <li>初回起動時は、アクセスコードを入力して承認を行います。</li>
+                    <li>右上の歯車マーク（設定）から「Gemini APIキー」が正しく設定されていることを確認します。（自動引き継ぎがある場合は不要）</li>
+                    <li><strong>「カメラを起動して名刺を撮影」</strong>または<strong>「ファイルから写真を選択」</strong>から名刺画像をセットします。</li>
+                    <li><strong>「名刺をスキャンする」</strong>ボタンをタップします。</li>
+                    <li>解析されたテキストを<strong>「コピー」</strong>し、社内システムやExcel等に貼り付けて活用してください。</li>
+                </ol>
+
+                <h2>⚙️ 管理者向け情報</h2>
+                <ul>
+                    <li><strong>端末の再ロック（認証解除）:</strong> 社員が端末を返却・紛失した際など、認証をクリアしたい場合は、設定画面（右上の歯車）の下部にある「この端末を再ロックする」を実行してください。</li>
+                    <li><strong>端末ID（UUID）のコピー:</strong> 初回起動画面および設定画面で、その端末のUUIDを確認・コピーできます。</li>
+                </ul>
+            </div>
         </div>
     </div>
 

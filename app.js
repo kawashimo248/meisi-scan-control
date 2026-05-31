@@ -58,7 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSettingsClose: document.getElementById('btn-settings-close'),
         geminiApiKey: document.getElementById('gemini-api-key'),
         btnSettingsSave: document.getElementById('btn-settings-save'),
-        toggleVisibilityBtns: document.querySelectorAll('.btn-toggle-visibility')
+        toggleVisibilityBtns: document.querySelectorAll('.btn-toggle-visibility'),
+
+        // Help Modal
+        btnHelpToggle: document.getElementById('btn-help-toggle'),
+        helpModal: document.getElementById('help-modal'),
+        btnHelpClose: document.getElementById('btn-help-close')
     };
 
     // ---------------------------------------------------------
@@ -371,6 +376,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             checkApiKeyConfigured();
             if (elements.settingsModal) elements.settingsModal.classList.add('hidden');
+        });
+    }
+
+    // Help Modal Actions
+    if (elements.btnHelpToggle) {
+        elements.btnHelpToggle.addEventListener('click', () => {
+            if (elements.helpModal) elements.helpModal.classList.remove('hidden');
+        });
+    }
+
+    if (elements.btnHelpClose) {
+        elements.btnHelpClose.addEventListener('click', () => {
+            if (elements.helpModal) elements.helpModal.classList.add('hidden');
         });
     }
 
